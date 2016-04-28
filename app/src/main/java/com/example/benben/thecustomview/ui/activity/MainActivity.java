@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                         FirstActivity.startFirstActivity(MainActivity.this);
                         break;
                     case 1:
-                        Toast.makeText(MainActivity.this,"2",Toast.LENGTH_SHORT).show();
+                        SecondActivity.startSecondActivity(MainActivity.this);
                         break;
                 }
             }
