@@ -2,6 +2,8 @@ package com.example.benben.thecustomview.ui.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -30,7 +32,7 @@ public class CustomImageView extends View {
     /**
      * 控件中的图片
      */
-//    private Bitmap mSrc;
+    private Bitmap mImage;
     /**
      * 控件图片的缩放模式
      */
@@ -40,7 +42,7 @@ public class CustomImageView extends View {
     /**
      * 图片的介绍
      */
-    private String mTitle;
+    private String mTitle = "aaa";
     /**
      * 字体的颜色
      */
@@ -61,29 +63,19 @@ public class CustomImageView extends View {
 
     public CustomImageView(Context context) {
         super(context, null);
+        Log.i("lyx", "1____________1______________: ");
     }
 
     public CustomImageView(Context context, AttributeSet attrs) {
         super(context, attrs, 0);
-    }
-
-    /**
-     * 初始化所持有自定义类型
-     *
-     * @param context
-     * @param attrs
-     * @param defStyleAttr
-     */
-    public CustomImageView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.CustomImageView, defStyleAttr, 0);
+        TypedArray a = context.getTheme().obtainStyledAttributes(R.styleable.CustomImageView);
         int n = a.getIndexCount();
         for (int i = 0; i < n; i++) {
             int attr = a.getIndex(i);
             switch (attr) {
-//                case R.styleable.CustomImageView_src:
-//                    mSrc = BitmapFactory.decodeResource(getResources(), a.getResourceId(attr, 0));
-//                    break;
+                case R.styleable.CustomImageView_image:
+                    mImage = BitmapFactory.decodeResource(getResources(), a.getResourceId(attr, 0));
+                    break;
                 case R.styleable.CustomImageView_imageScaleType:
                     mImageScale = a.getInt(attr, 0);
                     break;
@@ -103,9 +95,24 @@ public class CustomImageView extends View {
         rect = new Rect();
         mPaint = new Paint();
         mTextBound = new Rect();
+
         mPaint.setTextSize(mTextSize);
         /**计算了描绘字体需要的范围*/
         mPaint.getTextBounds(mTitle, 0, mTitle.length(), mTextBound);
+    }
+
+    /**
+     * 初始化所持有自定义类型
+     *
+     * @param context
+     * @param attrs
+     * @param defStyleAttr
+     */
+    public CustomImageView(Context context, AttributeSet attrs, int defStyleAttr) {
+
+        super(context, attrs, defStyleAttr);
+        Log.i("lyx", "3____________1______________: ");
+
     }
 
     /**
@@ -113,18 +120,17 @@ public class CustomImageView extends View {
      */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        Log.i("lyx", "____________2______________: ");
+
         /**设置宽度*/
         int specMode = MeasureSpec.getMode(widthMeasureSpec);
         int specSize = MeasureSpec.getSize(widthMeasureSpec);
-        if (specMode == MeasureSpec.EXACTLY) {//match_parent,accurate
+        if (specMode == MeasureSpec.EXACTLY) {//match_parent
             Log.i("lyx", "EXACTLY: ");
             mWidth = specSize;
         } else {
             /*由图片决定高度*/
-            int desireByImg = getPaddingLeft() + getPaddingRight()
-//                    + mSrc.getWidth()
-                    ;
+            int desireByImg = getPaddingLeft() + getPaddingRight() + mImage.getWidth();
             /*由字体决定的宽*/
             int desireByTitle = getPaddingLeft() + getPaddingRight() + mTextBound.width();
             if (specMode == MeasureSpec.AT_MOST) {//wrap_content
@@ -136,14 +142,12 @@ public class CustomImageView extends View {
         /**设置高度*/
         specMode = MeasureSpec.getMode(heightMeasureSpec);
         specSize = MeasureSpec.getSize(heightMeasureSpec);
-
         if (specMode == MeasureSpec.EXACTLY) {
             mHeight = specSize;
         } else {
             int desire = getPaddingTop() + getPaddingBottom()
-//                    + mSrc.getHeight()
-//                    + mTextBound.height()
-                    ;
+                    + mImage.getHeight()
+                    + mTextBound.height();
             if (specMode == MeasureSpec.AT_MOST) {
                 mHeight = Math.min(desire, specSize);
             }
@@ -153,10 +157,13 @@ public class CustomImageView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
+        Log.i("lyx", "____________3______________: ");
         /**边框*/
-        mPaint
-                .setStrokeWidth(4);
+        if (mImage == null) {
+            mImage = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+
+        }
+        mPaint.setStrokeWidth(4);
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setColor(Color.CYAN);
         canvas.drawRect(0, 0, getMeasuredWidth(), getMeasuredHeight(), mPaint);
@@ -166,6 +173,7 @@ public class CustomImageView extends View {
         rect.top = getPaddingTop();
         rect.bottom = getPaddingBottom();
 
+
         mPaint.setColor(mTextColor);
         mPaint.setStyle(Paint.Style.FILL);
 
@@ -174,6 +182,7 @@ public class CustomImageView extends View {
             TextPaint paint = new TextPaint(mPaint);
             String msg = TextUtils.ellipsize(mTitle, paint, mWidth - getPaddingLeft() - getPaddingRight(),
                     TextUtils.TruncateAt.END).toString();
+
             canvas.drawText(msg, getPaddingLeft(), mHeight - getPaddingBottom(), mPaint);
         } else {
             /**正常情况下， 将字体居中*/
@@ -181,17 +190,16 @@ public class CustomImageView extends View {
         }
         /**取消使用掉的块*/
         rect.bottom -= mTextBound.height();
-//        if (mImageScale == IMAGE_SCALE_FITXY) {
-//            canvas.drawBitmap(mSrc, null, rect, mPaint);
-//        }
-//        else {
-//            /**计算居中的矩形范围*/
-//            rect.left = mWidth / 2 - mSrc.getWidth() / 2;
-//            rect.right = mWidth / 2 - mSrc.getWidth() / 2;
-//            rect.top = (mHeight - mTextBound.height()) / 2 - mSrc.getHeight() / 2;
-//            rect.bottom = (mHeight - mTextBound.height()) / 2 - mSrc.getHeight() / 2;
-//
-//            canvas.drawBitmap(mSrc, null, rect, mPaint);
-//        }
+        if (mImageScale == IMAGE_SCALE_FITXY) {
+            Log.i("lyx", "mImage: " + mImage);
+            canvas.drawBitmap(mImage, null, rect, mPaint);
+        } else {
+            /**计算居中的矩形范围*/
+            rect.left = mWidth / 2 - mImage.getWidth() / 2;
+            rect.right = mWidth / 2 - mImage.getWidth() / 2;
+            rect.top = (mHeight - mTextBound.height()) / 2 - mImage.getHeight() / 2;
+            rect.bottom = (mHeight - mTextBound.height()) / 2 - mImage.getHeight() / 2;
+            canvas.drawBitmap(mImage, null, rect, mPaint);
+        }
     }
 }

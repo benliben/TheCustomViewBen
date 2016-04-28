@@ -15,6 +15,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!--第一项-->
+        <activity android:name=".ui.activity.FirstActivity"></activity>
+        <!--第二项-->
+        <activity android:name=".ui.activity.SecondActivity"></activity>
     </application>
 
 </manifest>

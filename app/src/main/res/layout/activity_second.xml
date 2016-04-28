@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:conetn="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <com.example.benben.thecustomview.ui.view.CustomImageView
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:padding="10dp"
+        conetn:image="@mipmap/hehe"
+        conetn:imageScaleType="center"
+        conetn:titleText="helloworldwelcome"
+        conetn:titleTextColor="#00ff00"
+        conetn:titleTextSize="20sp" />
 
 </LinearLayout>
